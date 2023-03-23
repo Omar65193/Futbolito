@@ -26,6 +26,8 @@ class Ball(context: Context?) : View(context), SensorEventListener {
     var ly1 : Float = 0F
     var direccionX = -1f;
     var direccionY = 1f;
+    var contEq1: Int = 0
+    var contEq2: Int = 0
     var flag: Boolean = false
     var valido1 : Boolean = false
     var valido2 : Boolean = false
@@ -33,8 +35,13 @@ class Ball(context: Context?) : View(context), SensorEventListener {
     var scaledBmpCancha : Bitmap
     var bmpBalon : Bitmap
     var scaledBmpBalon : Bitmap
+    var pincel = Paint()
 
     init{
+        pincel.setColor(Color.WHITE)
+        pincel.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD))
+        pincel.textSize = 60f
+        pincel.textAlign = Paint.Align.CENTER
         var sm = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         var acelerometro = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         sm.registerListener(this, acelerometro, SensorManager.SENSOR_DELAY_GAME)
@@ -101,13 +108,15 @@ class Ball(context: Context?) : View(context), SensorEventListener {
         }
         //PORTERIA ARRIBA
         if(x1>=(width/2)-100.toFloat() && x1<=(width/2)+50.toFloat() && y1>size+50 && y1<=size+80 && valido1){
-            Toast.makeText(context,"GOL EQUIPO 1!",Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context,"GOL EQUIPO 1!",Toast.LENGTH_SHORT).show()
+            contEq1++
             x1 = (width/2).toFloat()
             y1 = (height/2-(height*0.08)).toFloat()
         }
         //PORTERIA ABAJO
         if(x1>=(width/2)-100.toFloat() && x1<=(width/2)+90.toFloat() && y1>=(height-(height*0.08)) && y1<height-(height*0.07) && valido2){
-            Toast.makeText(context,"GOL EQUIPO 2!",Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context,"GOL EQUIPO 2!",Toast.LENGTH_SHORT).show()
+            contEq2++
             x1 = (width/2).toFloat()
             y1 = (height/2-(height*0.08)).toFloat()
         }
@@ -128,6 +137,9 @@ class Ball(context: Context?) : View(context), SensorEventListener {
             flag = true
         }
         canvas!!.drawBitmap(scaledBmpBalon, x1, y1, painter)
+        canvas!!.drawText("Equipo 1: "+contEq1+"   -   Equipo 2: "+contEq2,width/2f, 55f, pincel)
+        canvas!!.drawText("1",width/2f, height/6f, pincel)
+        canvas!!.drawText("2",width/2f, height - (height/6f - 59f), pincel)
 
         painter.setColor(Color.WHITE)
     }
