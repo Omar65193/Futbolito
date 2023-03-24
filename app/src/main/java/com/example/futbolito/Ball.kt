@@ -20,12 +20,6 @@ class Ball(context: Context?) : View(context), SensorEventListener {
     var y1 : Float = 0F
     var vx1 : Float = 0F
     var vy1 : Float = 0F
-    var gx1 : Float = 0F
-    var gy1 : Float = 0F
-    var lx1 : Float = 0F
-    var ly1 : Float = 0F
-    var direccionX = -1f;
-    var direccionY = 1f;
     var contEq1: Int = 0
     var contEq2: Int = 0
     var flag: Boolean = false
@@ -58,47 +52,31 @@ class Ball(context: Context?) : View(context), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        val alpha: Float = 0.8f
-
-        // Isolate the force of gravity with the low-pass filter.
-        gx1 = alpha * gx1 + (1 - alpha) * event!!.values[0]
-        gy1 = alpha * gy1 + (1 - alpha) * event!!.values[1]
-
-        // Remove the gravity contribution with the high-pass filter.
-        lx1 += event.values[0] - gx1
-        ly1 += event.values[1] - gy1
-
-        vx1 = event?.values?.get(0)!!
-        vy1 = event?.values?.get(1)!!
-        actualizar()
-    }
-
-    private fun actualizar() {
-        x1 += direccionX*lx1
-        y1 += direccionY*ly1
+        vx1 -= event?.values?.get(0)!!/10f
+        vy1 += event?.values?.get(1)!!/10f
+        x1 += vx1
+        y1 += vy1
 
         //COLISIONES
         if(x1>=(width-size)){
-            direccionX *= -1f
+            x1 = width - size
+            vx1 = -vx1*0.4f
         }else if(x1<=0.toFloat()){
-            direccionX *= -1f
+            x1 = 0.0f
+            vx1 = -vx1*0.4f
         }
-        /*else if(x1>(width*0.4) && x1<width-(width*0.4)){
-            direccionX = -1f
-        }*/
 
         if(y1>=(height-size)){
-            direccionY *= -1f
+            y1 = height - size
+            vy1 = -vy1*0.4f
             valido1 = false
             valido2 = false
         }else if(y1<=0.toFloat()){
-            direccionY *= -1f ;
+            y1=0f
+            vy1 = -vy1*0.4f
             valido1 = false
             valido2 = false
         }
-        /*else if(y1>(height*0.4) && y1<height-(height*0.4)){
-            direccionY = 1f
-        }*/
 
         if(y1>=size*3){
             valido1 = true
@@ -108,14 +86,12 @@ class Ball(context: Context?) : View(context), SensorEventListener {
         }
         //PORTERIA ARRIBA
         if(x1>=(width/2)-100.toFloat() && x1<=(width/2)+50.toFloat() && y1>size+50 && y1<=size+80 && valido1){
-            //Toast.makeText(context,"GOL EQUIPO 1!",Toast.LENGTH_SHORT).show()
             contEq1++
             x1 = (width/2).toFloat()
             y1 = (height/2-(height*0.08)).toFloat()
         }
         //PORTERIA ABAJO
         if(x1>=(width/2)-100.toFloat() && x1<=(width/2)+90.toFloat() && y1>=(height-(height*0.08)) && y1<height-(height*0.07) && valido2){
-            //Toast.makeText(context,"GOL EQUIPO 2!",Toast.LENGTH_SHORT).show()
             contEq2++
             x1 = (width/2).toFloat()
             y1 = (height/2-(height*0.08)).toFloat()
